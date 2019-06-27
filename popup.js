@@ -3,6 +3,7 @@ const displayOriginal = document.getElementById('displayOriginal');
 const displayOnlyShort = document.getElementById('displayOnlyShort');
 const displayOnlyBunyan = document.getElementById('displayOnlyBunyan');
 const displayOnlyAll = document.getElementById('displayOnlyAll');
+const displayLogPopUp = document.getElementById('displayLogPopUp');
 chrome.storage.sync.get('color', function(data) {
   // changeColor.style.backgroundColor = data.color;
   // changeColor.setAttribute('value', data.color);
@@ -30,19 +31,23 @@ const commonScript = `
       return [].slice.call(document.querySelectorAll(".kbnDocTable__row"))
     }
 
+    function renderLogLineEl(logLine) {
+      const levelString = levelStr(logLine.level)
+      const logLineMsgElement ="<div style='color:"+colors[levelString]+"'>"+levelString+": "+logLine.msg+"</div>";
+      const elementBunyanLogRow = document.createElement("div")
+      elementBunyanLogRow.className="bunyanLogRow"
+      elementBunyanLogRow.innerHTML = '<div class="logLineShort">' + logShortRender(logLine) + '</div><div class="logLineExtended" >' +logLineMsgElement + "<pre>"+JSON.stringify(logLine, '  ', '  ')+"<pre></div>"
+      return elementBunyanLogRow
+    }
+
     function showCustomLogs(){
       const logLinesElements = getLogLinesElements()
       logLinesElements.forEach((el, idx) => {
         let logLine = el.querySelector(".source").children[1].innerText
         logLine = JSON.parse(logLine)
-        const levelString = levelStr(logLine.level)
         if(!el.children[2].children[2]){
-          const logLineMsgElement ="<div style='color:"+colors[levelString]+"'>"+levelString+": "+logLine.msg+"</div>";
-          const elementBunyanLogRow = document.createElement("div")
-          elementBunyanLogRow.className="bunyanLogRow"
 
-          elementBunyanLogRow.innerHTML = '<div class="logLineShort">' + logShortRender(logLine) + '</div><div class="logLineExtended" >' +logLineMsgElement + "<pre>"+JSON.stringify(logLine, '  ', '  ')+"<pre></div>"
-          el.children[2].appendChild(elementBunyanLogRow)
+          el.children[2].appendChild(renderLogLineEl(logLine))
         } else {
           el.children[2].children[2].style.display = null;
         }
@@ -91,6 +96,37 @@ const commonScript = `
         customLogEl.querySelector('.logLineExtended').style.display = displays[1];
       })
     }
+
+
+    function displayLogPopUp(){
+      const logPopup = document.createElement("div")
+      logPopup.id = "logPopUp"
+
+      logPopup.style.position = 'absolute';
+      logPopup.style.top = '100px';
+      logPopup.style.left = '0px';
+      logPopup.style.width = '100%';
+      logPopup.style.border = '1px solid black';
+      logPopup.style.backgroundColor = '#ddd';
+      logPopup.style.zIndex = '10000';
+      logPopup.innerHTML="<table><thead><th></th><th>Time</th><th>Log</th></thead><tbody></tbody></table>"
+
+      document.querySelector('body').appendChild(logPopup)
+
+      const logLinesElements = getLogLinesElements()
+      const logLines = logLinesElements.map(el => JSON.parse( el.querySelector(".source").children[1].innerText ) )
+      const tbody = logPopup.querySelector('tbody');
+      logLines
+        .sort((a, b) => a.time < b.time  )
+        .forEach((logLine, idx) => {
+          const logLineEl = document.createElement("tr")
+          logLineEl.innerHTML = "<td style='padding: 5px' ><button>V</button></td><td style='white-space: nowrap; padding: 5px' >"+logLine.time+"</td><td>"+renderLogLineEl(logLine).innerHTML+"</td>"
+          tbody.appendChild(logLineEl)
+        })
+
+
+    }
+
 `
 
 
@@ -127,6 +163,10 @@ displayOnlyBunyan.onclick = function(element) {
 }
 displayOnlyAll.onclick = function(element) {
   executeScriptOnPage(`displayCustomLogsPartial('both')`);
+}
+
+displayLogPopUp.onclick = function(element) {
+  executeScriptOnPage(`displayLogPopUp()`);
 }
 
 
