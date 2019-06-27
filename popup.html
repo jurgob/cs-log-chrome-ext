@@ -2,14 +2,24 @@
   <html>
     <head>
       <style>
+        .buttonPannel {
+          width: 320px;
+        }
         button {
           outline: none;
         }
       </style>
     </head>
     <body>
-      <button id="changeColor">bunyan</button> <br /><br />
-      <button id="changeColor">original</button>
+      <div class="buttonPannel" >
+        <button id="displayOriginal">original</button> <span> | </span>
+        <button id="displayCustomLog">custom log</button>
+        <br /><br />
+        Custom Log Option:
+        <button id="displayOnlyShort">short</button> <span> | </span>
+        <button id="displayOnlyBunyan">bunyan</button> <span> | </span>
+        <button id="displayOnlyAll">all</button>
+      </div>
       <script src="popup.js"></script>
 
     </body>
