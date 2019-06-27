@@ -24,15 +24,25 @@ changeColor.onclick = function(element) {
         "DEBUG": "#B2B200"
     }
 
-    var logLinesEls = document.querySelectorAll('dl.truncate-by-height')
-    var logLines = [].slice.call(logLinesEls).map(el => el.children[1].innerText).map(j => JSON.parse(j))
-    logLinesEls.forEach((el, idx) => {
-      let parentEl = el.parentElement.parentElement
-      parentEl.className ="";
-      let logLine = logLines[idx]
+    function getLogLinesElements(){
+      return [].slice.call(document.querySelectorAll(".kbnDocTable__row"))
+    }
+
+
+    const logLinesElements = getLogLinesElements()
+    logLinesElements.forEach((el, idx) => {
+      let logLine = el.querySelector(".source").children[1].innerText
+      logLine = JSON.parse(logLine)
       const levelString = levelStr(logLine.level)
-      const firstEl ="<div style='color:"+colors[levelString]+"'>"+levelString+": "+logLine.msg+"</div>";
-    	parentEl.innerHTML = firstEl + "<pre>"+JSON.stringify(logLine, '  ', '  ')+"<pre>";
+
+      const logLineMsgElement ="<div style='color:"+colors[levelString]+"'>"+levelString+": "+logLine.msg+"</div>";
+      const elementBunyanLogRow = document.createElement("div")
+      elementBunyanLogRow.className="bunyanLogRow"
+      elementBunyanLogRow.innerHTML = logLineMsgElement + "<pre>"+JSON.stringify(logLine, '  ', '  ')+"<pre>"
+      el.children[2].appendChild(elementBunyanLogRow)
+      el.children[2].children[0].style.display = 'none';
+      el.children[2].children[1].style.display = 'none';
+
     })
   }
 
