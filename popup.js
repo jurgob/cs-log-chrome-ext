@@ -4,6 +4,8 @@ const displayOnlyShort = document.getElementById('displayOnlyShort');
 const displayOnlyBunyan = document.getElementById('displayOnlyBunyan');
 const displayOnlyAll = document.getElementById('displayOnlyAll');
 const displayLogPopUp = document.getElementById('displayLogPopUp');
+const logPopUpHideDetails = document.getElementById('logPopUpHideDetails');
+const logPopUpShowDetails = document.getElementById('logPopUpShowDetails');
 chrome.storage.sync.get('color', function(data) {
   // changeColor.style.backgroundColor = data.color;
   // changeColor.setAttribute('value', data.color);
@@ -76,6 +78,14 @@ const commonScript = `
       return "ACCESS:" + " " + logLine.res.statusCode+ " " +logLine.latency + "ms  " +logLine.req.method + " "+logLine.req.url
     }
 
+    function customLoginDisplayDetails(showDetails) {
+      const displayValue = showDetails ? null :'none'
+      const els = document.querySelectorAll('#logPopUp .logLineExtended')
+      return [].slice.call(els)
+        .forEach(el => {
+          el.style.display = displayValue
+        })
+    }
 
     function displayCustomLogsPartial(type) {
 
@@ -104,7 +114,7 @@ const commonScript = `
 
       logPopup.style.position = 'absolute';
       logPopup.style.top = '100px';
-      logPopup.style.left = '0px';
+      logPopup.style.left = '220px';
       logPopup.style.width = '100%';
       logPopup.style.border = '1px solid black';
       logPopup.style.backgroundColor = '#ddd';
@@ -123,7 +133,6 @@ const commonScript = `
           logLineEl.innerHTML = "<td style='padding: 5px' ><button>V</button></td><td style='white-space: nowrap; padding: 5px' >"+logLine.time+"</td><td>"+renderLogLineEl(logLine).innerHTML+"</td>"
           tbody.appendChild(logLineEl)
         })
-
 
     }
 
@@ -169,4 +178,10 @@ displayLogPopUp.onclick = function(element) {
   executeScriptOnPage(`displayLogPopUp()`);
 }
 
+logPopUpHideDetails.onclick = function(element) {
+  executeScriptOnPage(`customLoginDisplayDetails(false)`);
+}
+logPopUpShowDetails.onclick = function(element) {
+  executeScriptOnPage(`customLoginDisplayDetails(true)`);
+}
 
