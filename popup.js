@@ -1,5 +1,6 @@
 const displayCustomLog = document.getElementById('displayCustomLog');
 const displayOriginal = document.getElementById('displayOriginal');
+const goToLogs = document.getElementById('goToLogs');
 const displayOnlyShort = document.getElementById('displayOnlyShort');
 const displayOnlyBunyan = document.getElementById('displayOnlyBunyan');
 const displayOnlyAll = document.getElementById('displayOnlyAll');
@@ -22,7 +23,7 @@ const commonScript = `
         return "ERROR"
     }
 
-    let colors = {
+    window.colors = {
         "INFO": "#149DA0",
         "WARN": "#D18BE1",
         "ERROR": "#860303",
@@ -45,10 +46,10 @@ const commonScript = `
     function showCustomLogs(){
       const logLinesElements = getLogLinesElements()
       logLinesElements.forEach((el, idx) => {
-        let logLine = el.querySelector(".source").children[1].innerText
+        //let logLine = el.querySelector(".source").children[1].innerText
+        let logLine = el.children[2].innerText
         logLine = JSON.parse(logLine)
         if(!el.children[2].children[2]){
-
           el.children[2].appendChild(renderLogLineEl(logLine))
         } else {
           el.children[2].children[2].style.display = null;
@@ -70,8 +71,13 @@ const commonScript = `
     }
 
     function logShortRender(logLine){
-      if(logLine._audit)
-      return logShortRenderAccess(logLine)
+      if(logLine._audit) {
+        let moreinfo = ""
+        if(logLine.req.url.indexOf("/mediaEvent") !== -1)
+          moreinfo = logLine.req.body.event
+
+        return logShortRenderAccess(logLine) + " " + moreinfo
+      }
     }
 
     function logShortRenderAccess(logLine){
@@ -85,6 +91,9 @@ const commonScript = `
         .forEach(el => {
           el.style.display = displayValue
         })
+    }
+    function goToLogs(){
+      window.location.href="https://logs.dev.nexmo.cloud/kibana/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(message),filters:!(),index:'78e3ecd0-2af8-11e9-97b1-f1d745526cf7',interval:auto,query:(language:kuery,query:'type:%20%22conversation%22'),sort:!('@timestamp',desc))"
     }
 
     function displayCustomLogsPartial(type) {
@@ -102,8 +111,12 @@ const commonScript = `
       const logLinesElements = getLogLinesElements()
       logLinesElements.forEach((el, idx) => {
         const customLogEl = el.children[2].children[2]
-        customLogEl.querySelector('.logLineShort').style.display = displays[0];
-        customLogEl.querySelector('.logLineExtended').style.display = displays[1];
+        if(customLogEl) {
+          const logLineShortEl = customLogEl.querySelector('.logLineShort')
+          if(logLineShortEl) logLineShortEl.style.display = displays[0];
+
+          customLogEl.querySelector('.logLineExtended').style.display = displays[1];
+        }
       })
     }
 
@@ -162,6 +175,10 @@ displayOriginal.onclick = function(element) {
     showOriginalLogs()
   `
   executeScriptOnPage(script);
+}
+
+goToLogs.onclick = function(element) {
+  executeScriptOnPage(`goToLogs()`);
 }
 
 displayOnlyShort.onclick = function(element) {
