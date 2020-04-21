@@ -77,6 +77,8 @@ const commonScript = `
           moreinfo = logLine.req.body.event
 
         return logShortRenderAccess(logLine) + " " + moreinfo
+      } else {
+        return logLine.msg
       }
     }
 
