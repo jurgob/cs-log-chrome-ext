@@ -95,7 +95,7 @@ const commonScript = `
         })
     }
     function goToLogs(){
-      window.location.href="https://logs.dev.nexmo.cloud/kibana/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(message),filters:!(),index:'78e3ecd0-2af8-11e9-97b1-f1d745526cf7',interval:auto,query:(language:kuery,query:'type:%20%22conversation%22'),sort:!('@timestamp',desc))"
+      window.location.href="https://kibana.nexmo.cloud/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(message),filters:!(),index:'78e3ecd0-2af8-11e9-97b1-f1d745526cf7',interval:auto,query:(language:kuery,query:'type:%20%22conversation%22'),sort:!('@timestamp',desc))"
     }
 
     function displayCustomLogsPartial(type) {

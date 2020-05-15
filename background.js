@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       chrome.declarativeContent.onPageChanged.addRules([{
         conditions: [new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostEquals: 'logs.dev.nexmo.cloud'},
+          pageUrl: {hostEquals: 'kibana.nexmo.cloud'},
         })
         ],
             actions: [new chrome.declarativeContent.ShowPageAction()]
